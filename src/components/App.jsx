@@ -8,11 +8,21 @@ import { save } from 'service/LocalStorageService';
 
 export class App extends Component {
   state = {
-    contacts: load('contacts'),
+    contacts: [],
     filter: '',
   };
 
-  
+  componentDidMount() {
+    if (load("contacts")) {
+      this.setState({ contacts: load('contacts') });
+    }
+    
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    save('contacts', this.state.contacts);
+  }
+
   addContact = event => {
     event.preventDefault();
     const { name, number } = event.target;
@@ -24,24 +34,18 @@ export class App extends Component {
     const info = contact.name + ' is already in contacts';
     this.checkAddContact(this.state.contacts, contact)
       ? Notify.failure(info)
-      : save('contacts', [...load('contacts'), contact]);
-    this.setState({ contacts: load('contacts') });
+      : this.setState(prevState => ({
+          contacts: [...prevState.contacts, contact],
+        }));
 
     event.target.reset();
   };
 
   deleteContact = event => {
     const value = event.target.parentNode.firstChild.textContent;
-
-    this.setState(
-      {
-        contacts: this.state.contacts.filter(item => item.name !== value),
-      },
-      () => {
-        
-        save('contacts', this.state.contacts);
-      }
-    );
+    this.setState({
+      contacts: this.state.contacts.filter(item => item.name !== value),
+    });
   };
 
   checkAddContact = (contacts, newContact) => {
@@ -63,9 +67,6 @@ export class App extends Component {
 
   render() {
     const filtred = this.filteredContacts();
-
-    console.log('storage', load('contacts'));
-    console.log('state', this.state.contacts);
 
     return (
       <div>
