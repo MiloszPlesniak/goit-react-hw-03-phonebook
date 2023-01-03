@@ -12,7 +12,7 @@ export class App extends Component {
     filter: '',
   };
 
-  componentDidMount() {}
+  
   addContact = event => {
     event.preventDefault();
     const { name, number } = event.target;
@@ -38,7 +38,7 @@ export class App extends Component {
         contacts: this.state.contacts.filter(item => item.name !== value),
       },
       () => {
-        console.log();
+        
         save('contacts', this.state.contacts);
       }
     );
