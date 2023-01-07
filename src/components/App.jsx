@@ -13,14 +13,17 @@ export class App extends Component {
   };
 
   componentDidMount() {
-    if (load("contacts")) {
+    if (load('contacts')) {
       this.setState({ contacts: load('contacts') });
     }
-    
   }
 
   componentDidUpdate(prevProps, prevState) {
-    save('contacts', this.state.contacts);
+    if (load('contacts') === undefined) {
+      save('contacts', []);
+    } else if (load('contacts').length !== this.state.contacts.length) {
+      save('contacts', this.state.contacts);
+    }
   }
 
   addContact = event => {
